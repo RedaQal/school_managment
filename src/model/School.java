@@ -1,10 +1,11 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class School {
-    private ArrayList<Student> students = new ArrayList<>();
-    public ArrayList<Student> gStudents(){
+    private List<Student> students = new ArrayList<>();
+    public List<Student> getStudents(){
         return students;
     }
     public void addStudent(Student student){

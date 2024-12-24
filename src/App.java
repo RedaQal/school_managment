@@ -1,9 +1,11 @@
-import controller.Controller;
+import controller.AppController;
+import model.School;
 
 public class App {
 
     public static void main(String[] args) throws Exception {
-        Controller controller = new Controller();
+        School school = new School();
+        AppController controller = new AppController(school);
         controller.start();
     }
 }
