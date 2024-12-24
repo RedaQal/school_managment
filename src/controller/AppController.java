@@ -30,6 +30,9 @@ public class AppController {
                 case 1:
                      studentController.manageStudent();
                     break;
+                case 2:
+                     teacherController.manageTeacher();
+                    break;
                 default:
                     break;
             }

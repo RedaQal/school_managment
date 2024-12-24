@@ -5,6 +5,7 @@ import model.Student;
 
 public class StudentView {
     public void displayStudentMenu(){
+        System.out.println("|-------Student Menu-------|");
         System.out.println("1- add a student");
         System.out.println("2- update student");
         System.out.println("3- delete student");
