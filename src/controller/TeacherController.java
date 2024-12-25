@@ -3,7 +3,6 @@ package controller;
 import java.util.Scanner;
 
 import model.School;
-import model.Student;
 import model.Teacher;
 import view.TeacherView;
 
