@@ -38,6 +38,6 @@ public class Teacher {
 
     @Override
     public String toString() {
-        return "Teacher : " + this.getName() + " subject :" + this.getSubject();
+        return this.getName();
     }
 }
