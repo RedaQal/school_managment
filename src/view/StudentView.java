@@ -5,7 +5,7 @@ import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
 
-public class StudentView extends JFrame {
+public class StudentView extends JPanel {
     private DefaultTableModel tableModel;
     private JTable studentTable;
     private JTextField nameField;
@@ -65,11 +65,7 @@ public class StudentView extends JFrame {
 
     public StudentView() {
         // initialize the frame
-        setTitle("Student Management");
-        setSize(600,400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(20, 20));
-        getContentPane().setBackground(backgroundColor);
         // Title
         JLabel title = new JLabel("Student Management",JLabel.CENTER);
         title.setFont(new Font("Segoe UI",Font.BOLD,24));

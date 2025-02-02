@@ -14,9 +14,12 @@ public class TeacherController {
     private TeacherView teacherView;
     private TeacherDAO teacherDAO;
 
-    public TeacherController(TeacherView teacherView,TeacherDAO teacherDAO) {
-        this.teacherView = teacherView ;
-        this.teacherDAO = teacherDAO ;
+    public TeacherView getTeacherView() {
+        return teacherView;
+    }
+    public TeacherController() {
+        this.teacherView = new TeacherView() ;
+        this.teacherDAO = new TeacherDAO() ;
         loadTeachers();
 
     }

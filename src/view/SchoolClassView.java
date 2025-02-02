@@ -7,7 +7,7 @@ import model.Teacher;
 
 import java.awt.*;
 
-public class SchoolClassView extends JFrame {
+public class SchoolClassView extends JPanel {
     private DefaultTableModel tableModel;
     private JTable classTable;
     private JTextField nameField;
@@ -66,12 +66,8 @@ public class SchoolClassView extends JFrame {
     }
 
     public SchoolClassView() {
-        // initialize the frame
-        setTitle("Classes Management");
-        setSize(600,400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // initialize the Pannel
         setLayout(new BorderLayout(20, 20));
-        getContentPane().setBackground(backgroundColor);
         // Title
         JLabel title = new JLabel("Classes Management",JLabel.CENTER);
         title.setFont(new Font("Segoe UI",Font.BOLD,24));

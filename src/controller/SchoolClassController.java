@@ -18,9 +18,12 @@ public class SchoolClassController {
     private SchoolClassDAO schoolClassDAO;
     private SchoolClassView schoolClassView;
 
-    public SchoolClassController(SchoolClassView schoolClassView,SchoolClassDAO schoolClassDAO) {
-        this.schoolClassView = schoolClassView;
-        this.schoolClassDAO = schoolClassDAO;
+    public SchoolClassView getSchoolClassView() {
+        return schoolClassView;
+    }
+    public SchoolClassController() {
+        this.schoolClassView = new SchoolClassView();
+        this.schoolClassDAO = new SchoolClassDAO();
         this.teacherDAO = new TeacherDAO();
         loadClasses();
     }

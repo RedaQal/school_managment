@@ -13,9 +13,12 @@ public class StudentController {
     private StudentView studentView;
     private StudentDAO studentDAO;
 
-    public StudentController(StudentView studentView, StudentDAO studentDAO) {
-        this.studentDAO = studentDAO;
-        this.studentView = studentView;
+    public StudentView getStudentView() {
+        return studentView;
+    }
+    public StudentController() {
+        this.studentDAO = new StudentDAO();
+        this.studentView = new StudentView();
         loadStudents();
     }
 
