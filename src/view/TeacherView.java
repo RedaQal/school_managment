@@ -19,7 +19,7 @@ public class TeacherView extends JPanel {
         return tableModel;
     }
 
-    public JTable getteacherTable() {
+    public JTable getTeacherTable() {
         return teacherTable;
     }
 
