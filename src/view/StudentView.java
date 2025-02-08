@@ -46,6 +46,7 @@ public class StudentView extends JPanel {
     public JButton getDeleteBtn() {
         return deleteBtn;
     }
+
     Color primaryColor = Color.decode("#0078D7");
     Color secondaryColor = Color.decode("#FFFFFF");
     Color backgroundColor = Color.decode("#F3F3F3");
@@ -67,65 +68,65 @@ public class StudentView extends JPanel {
         // initialize the frame
         setLayout(new BorderLayout(20, 20));
         // Title
-        JLabel title = new JLabel("Student Management",JLabel.CENTER);
-        title.setFont(new Font("Segoe UI",Font.BOLD,24));
+        JLabel title = new JLabel("Student Management", JLabel.CENTER);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 24));
         title.setForeground(primaryColor);
-        add(title,BorderLayout.NORTH);
+        add(title, BorderLayout.NORTH);
         // Form
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new GridBagLayout());
         formPanel.setBackground(secondaryColor);
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         JLabel nameLabel = new JLabel("Name :");
-        nameLabel.setFont(new Font("Segoe",Font.PLAIN,16));
+        nameLabel.setFont(new Font("Segoe", Font.PLAIN, 16));
         gbc.gridx = 0;
         gbc.gridy = 0;
-        formPanel.add(nameLabel,gbc);
+        formPanel.add(nameLabel, gbc);
         nameField = new JTextField();
-        nameField.setFont(new Font("Segoe",Font.PLAIN,14));
+        nameField.setFont(new Font("Segoe", Font.PLAIN, 14));
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 2;
-        formPanel.add(nameField,gbc);
+        formPanel.add(nameField, gbc);
         JLabel ageLabel = new JLabel("Age :");
-        ageLabel.setFont(new Font("Segoe",Font.PLAIN,16));
+        ageLabel.setFont(new Font("Segoe", Font.PLAIN, 16));
         gbc.gridx = 0;
         gbc.gridy = 2;
-        formPanel.add(ageLabel,gbc);
+        formPanel.add(ageLabel, gbc);
         ageField = new JTextField();
-        ageField.setFont(new Font("Segoe",Font.PLAIN,14));
+        ageField.setFont(new Font("Segoe", Font.PLAIN, 14));
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
-        formPanel.add(ageField,gbc);
+        formPanel.add(ageField, gbc);
         addBtn = createModerButton("add", primaryColor, secondaryColor);
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.CENTER;
-        formPanel.add(addBtn,gbc);
-        add(formPanel,BorderLayout.WEST);
+        formPanel.add(addBtn, gbc);
+        add(formPanel, BorderLayout.WEST);
         // table
-        String[] colStrings = {"ID","Name","Age"};
-        tableModel = new DefaultTableModel(colStrings,0);
+        String[] colStrings = { "ID", "Name", "Age" };
+        tableModel = new DefaultTableModel(colStrings, 0);
         studentTable = new JTable(tableModel);
         studentTable.setRowHeight(30);
-        studentTable.setFont(new Font("Segoe",Font.PLAIN,14));
-        studentTable.getTableHeader().setFont(new Font("Segoe",Font.BOLD,16));
+        studentTable.setFont(new Font("Segoe", Font.PLAIN, 14));
+        studentTable.getTableHeader().setFont(new Font("Segoe", Font.BOLD, 16));
         studentTable.getTableHeader().setBackground(primaryColor);
         studentTable.getTableHeader().setForeground(secondaryColor);
         studentTable.setSelectionBackground(tableRowColor);
 
         JScrollPane scrollPane = new JScrollPane(studentTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        add(scrollPane,BorderLayout.CENTER);
-        
+        add(scrollPane, BorderLayout.CENTER);
+
         // Actions
         JPanel actionPannel = new JPanel();
-        actionPannel.setLayout(new FlowLayout(FlowLayout.CENTER,15,10));
+        actionPannel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 10));
         actionPannel.setBackground(backgroundColor);
 
         newBtn = createModerButton("New", primaryColor, secondaryColor);
@@ -136,7 +137,7 @@ public class StudentView extends JPanel {
         actionPannel.add(editBtn);
         actionPannel.add(deleteBtn);
 
-        add(actionPannel,BorderLayout.SOUTH);
+        add(actionPannel, BorderLayout.SOUTH);
 
         newBtn.setEnabled(false);
         editBtn.setEnabled(false);
