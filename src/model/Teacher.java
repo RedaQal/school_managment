@@ -40,4 +40,10 @@ public class Teacher {
     public String toString() {
         return this.getName();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Teacher)) return false;
+        return this.getId() == ((Teacher) obj).getId();
+    }
 }

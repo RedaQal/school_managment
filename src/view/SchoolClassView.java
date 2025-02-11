@@ -114,6 +114,7 @@ public class SchoolClassView extends JPanel {
         String[] colStrings = {"ID","Name","teacher"};
         tableModel = new DefaultTableModel(colStrings,0);
         classTable = new JTable(tableModel);
+        classTable.setDefaultEditor(Object.class, null);
         classTable.setRowHeight(30);
         classTable.setFont(new Font("Segoe",Font.PLAIN,14));
         classTable.getTableHeader().setFont(new Font("Segoe",Font.BOLD,16));

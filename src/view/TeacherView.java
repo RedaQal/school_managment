@@ -46,6 +46,7 @@ public class TeacherView extends JPanel {
     public JButton getDeleteBtn() {
         return deleteBtn;
     }
+
     Color primaryColor = Color.decode("#0078D7");
     Color secondaryColor = Color.decode("#FFFFFF");
     Color backgroundColor = Color.decode("#F3F3F3");
@@ -112,6 +113,7 @@ public class TeacherView extends JPanel {
         String[] colStrings = {"ID","Name","Subject"};
         tableModel = new DefaultTableModel(colStrings,0);
         teacherTable = new JTable(tableModel);
+        teacherTable.setDefaultEditor(Object.class,null);
         teacherTable.setRowHeight(30);
         teacherTable.setFont(new Font("Segoe",Font.PLAIN,14));
         teacherTable.getTableHeader().setFont(new Font("Segoe",Font.BOLD,16));

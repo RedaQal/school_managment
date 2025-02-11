@@ -5,6 +5,7 @@ import java.awt.CardLayout;
 import javax.swing.JPanel;
 
 import view.AppView;
+import view.CostumSplash;
 
 public class AppController {
     private AppView view;
@@ -27,8 +28,21 @@ public class AppController {
 
         view.getStudentItem().addActionListener(e -> mainCardLayout.show(mainPanel, "studentManagement")); 
         view.getTeacherItem().addActionListener(e -> mainCardLayout.show(mainPanel, "teacherManagement")); 
-        view.getClassesItem().addActionListener(e -> mainCardLayout.show(mainPanel, "classesManagement"));
-
+        view.getClassesItem().addActionListener(e -> {
+            schoolClassController.loadClasses();
+            mainCardLayout.show(mainPanel, "classesManagement");
+        });
         view.setVisible(true);
+    }
+    public void app(){
+        CostumSplash splashScreen = new CostumSplash();
+        splashScreen.setVisible(true);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        splashScreen.setVisible(false);
+        start();
     }
 }

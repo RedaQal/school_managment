@@ -23,39 +23,40 @@ public class StudentController {
         this.studentView = new StudentView();
         loadStudents();
         studentView.getAddBtn().addActionListener(e -> addStudent());
-        studentView.getStudentTable().getSelectionModel().addListSelectionListener(e -> {
-            studentView.getNewBtn().setEnabled(true);
-            studentView.getEditBtn().setEnabled(true);
-            studentView.getDeleteBtn().setEnabled(true);
-            int selectedRow = studentView.getStudentTable().getSelectedRow();
-            for (ActionListener al : studentView.getDeleteBtn().getActionListeners()) {
-                studentView.getDeleteBtn().removeActionListener(al);
-            }
-            for (ActionListener al : studentView.getEditBtn().getActionListeners()) {
-                studentView.getEditBtn().removeActionListener(al);
-            }
-            if (selectedRow != -1) {
-                int id = (int) studentView.getStudentTable().getValueAt(selectedRow, 0);
-                String name = (String) studentView.getStudentTable().getValueAt(selectedRow, 1);
-                int age = (int) studentView.getStudentTable().getValueAt(selectedRow, 2);
-                studentView.getNameField().setText(name);
-                studentView.getAgeField().setText(Integer.toString(age));
+        studentView.getStudentTable().getSelectionModel().addListSelectionListener(e -> ListHandelr());
+    }
+    private void ListHandelr(){
+        studentView.getNewBtn().setEnabled(true);
+        studentView.getEditBtn().setEnabled(true);
+        studentView.getDeleteBtn().setEnabled(true);
+        int selectedRow = studentView.getStudentTable().getSelectedRow();
+        for (ActionListener al : studentView.getDeleteBtn().getActionListeners()) {
+            studentView.getDeleteBtn().removeActionListener(al);
+        }
+        for (ActionListener al : studentView.getEditBtn().getActionListeners()) {
+            studentView.getEditBtn().removeActionListener(al);
+        }
+        if (selectedRow != -1) {
+            int id = (int) studentView.getStudentTable().getValueAt(selectedRow, 0);
+            String name = (String) studentView.getStudentTable().getValueAt(selectedRow, 1);
+            int age = (int) studentView.getStudentTable().getValueAt(selectedRow, 2);
+            studentView.getNameField().setText(name);
+            studentView.getAgeField().setText(Integer.toString(age));
 
-                Student student = new Student(id, name, age);
+            Student student = new Student(id, name, age);
 
-                studentView.getDeleteBtn().addActionListener(element -> {
-                    deleteStudent(student);
-                    formCleaning();
-                });
-                studentView.getEditBtn().addActionListener(element -> {
-                    updateStudent(student);
-                    formCleaning();
-                });
-                studentView.getNewBtn().addActionListener(element -> formCleaning());
+            studentView.getDeleteBtn().addActionListener(element -> {
+                deleteStudent(student);
+                formCleaning();
+            });
+            studentView.getEditBtn().addActionListener(element -> {
+                updateStudent(student);
+                formCleaning();
+            });
+            studentView.getNewBtn().addActionListener(element -> formCleaning());
 
-            }
-            studentView.getAddBtn().setEnabled(false);
-        });
+        }
+        studentView.getAddBtn().setEnabled(false);
     }
 
     private void loadStudents() {

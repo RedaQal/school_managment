@@ -113,6 +113,7 @@ public class StudentView extends JPanel {
         String[] colStrings = { "ID", "Name", "Age" };
         tableModel = new DefaultTableModel(colStrings, 0);
         studentTable = new JTable(tableModel);
+        studentTable.setDefaultEditor(Object.class, null);;
         studentTable.setRowHeight(30);
         studentTable.setFont(new Font("Segoe", Font.PLAIN, 14));
         studentTable.getTableHeader().setFont(new Font("Segoe", Font.BOLD, 16));
