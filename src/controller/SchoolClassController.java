@@ -1,153 +1,131 @@
 package controller;
 
-import java.util.Scanner;
+import java.util.List;
+
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionListener;
 
 import dao.SchoolClassDAO;
-import dao.StudentDAO;
 import dao.TeacherDAO;
 import model.SchoolClass;
-import model.Student;
 import model.Teacher;
 import view.SchoolClassView;
 
 public class SchoolClassController {
     private TeacherDAO teacherDAO;
     private SchoolClassDAO schoolClassDAO;
-    private StudentDAO studentDAO;
-    private SchoolClassView view;
-    private Scanner scanner;
+    private SchoolClassView schoolClassView;
 
-    SchoolClassController() {
-        this.view = new SchoolClassView();
-        this.scanner = new Scanner(System.in);
+    public SchoolClassView getSchoolClassView() {
+        return schoolClassView;
+    }
+
+    public SchoolClassController() {
+        this.schoolClassView = new SchoolClassView();
         this.schoolClassDAO = new SchoolClassDAO();
         this.teacherDAO = new TeacherDAO();
-        this.studentDAO = new StudentDAO();
+        loadClasses();
+        schoolClassView.getAddBtn().addActionListener(e -> addClass());
+        schoolClassView.getClassTable().getSelectionModel().addListSelectionListener(e -> listHandler());
     }
 
-    public void manageSchoolClass() {
-        int entry;
-        do {
-            view.displaySchoolClassMenu();
-            entry = scanner.nextInt();
-            scanner.nextLine();
-            switch (entry) {
-                case 1:
-                    addSchoolClass();
-                    break;
-                case 2:
-                    updateSchoolClass();
-                    break;
-                case 3:
-                    deleteSchoolClass();
-                    break;
-                case 4:
-                    addStudentToClass();
-                    break;
-                case 5:
-                    deleteStudentFromClass();
-                    break;
-                case 6:
-                    displayClassStudents();
-                    break;
-                case 7:
-                    view.displaySchoolClasses(schoolClassDAO.findAll());
-                    break;
-                case 8:
-                break;
-                default:
-                System.out.println("Please choose a valid option");
-                    break;
-            }
-        } while (entry != 8);
-    }
-
-    private void addSchoolClass() {
-        System.out.print("Enter the Class name :");
-        String name = scanner.nextLine();
-        System.out.print("Enter the Class teacher id :");
-        int teacherId = scanner.nextInt();
-        scanner.nextLine();
-        Teacher teacher = teacherDAO.findById(teacherId);
-        if (teacher != null) {
-            SchoolClass schoolClass = new SchoolClass(name, teacher);
-            schoolClassDAO.save(schoolClass);
-            System.out.println("class added successfully");
-        }else{
-            System.out.println("teacher not found");
+    private void listHandler() {
+        schoolClassView.getNewBtn().setEnabled(true);
+        schoolClassView.getEditBtn().setEnabled(true);
+        schoolClassView.getDeleteBtn().setEnabled(true);
+        int selectedRow = schoolClassView.getClassTable().getSelectedRow();
+        for (ActionListener al : schoolClassView.getDeleteBtn().getActionListeners()) {
+            schoolClassView.getDeleteBtn().removeActionListener(al);
+        }
+        for (ActionListener al : schoolClassView.getEditBtn().getActionListeners()) {
+            schoolClassView.getEditBtn().removeActionListener(al);
+        }
+        if (selectedRow != -1) {
+            int id = (int) schoolClassView.getClassTable().getValueAt(selectedRow, 0);
+            String className = (String) schoolClassView.getClassTable().getValueAt(selectedRow, 1);
+            Teacher teacher = (Teacher) schoolClassView.getClassTable().getValueAt(selectedRow, 2);
+            schoolClassView.getNameField().setText(className);
+            SchoolClass schoolClass = new SchoolClass(id, className, teacher);
+            schoolClassView.getTeacherComboBox().setSelectedItem(teacher);
+            schoolClassView.getDeleteBtn().addActionListener(element -> deleteClass(id));
+            schoolClassView.getEditBtn().addActionListener(element -> updateClass(schoolClass));
+            schoolClassView.getNewBtn().addActionListener(element -> formCleaning());
         }
     }
 
-    private void updateSchoolClass() {
-        System.out.print("enter the class id :");
-        int id = scanner.nextInt();
-        scanner.nextLine();
-        SchoolClass schoolClass = schoolClassDAO.findById(id);
-        if (schoolClass != null) {
-            System.out.print("enter the new class name :");
-            String name = scanner.nextLine();
-            System.out.print("enter the new teacher id :");
-            int teacherId = scanner.nextInt();
-            scanner.nextLine();
-            Teacher teacher = teacherDAO.findById(teacherId);
-            schoolClass.setClassName(name);
+    private void addClass() {
+        try {
+            String className = schoolClassView.getNameField().getText();
+            Teacher teacher = (Teacher) schoolClassView.getTeacherComboBox().getSelectedItem();
+            if(className.isEmpty() || teacher == null){
+                throw new Exception("you must enter a valid name and teacher");
+            }
+            SchoolClass schoolClass = new SchoolClass(className, teacher);
+            schoolClassDAO.save(schoolClass);
+            loadClasses();
+            formCleaning();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(schoolClassView, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void deleteClass(int id) {
+        try {
+            schoolClassDAO.delete(id);
+            loadClasses();
+            formCleaning();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(schoolClassView, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private void updateClass(SchoolClass schoolClass) {
+        try {
+            String className = schoolClassView.getNameField().getText();
+            Teacher teacher = (Teacher) schoolClassView.getTeacherComboBox().getSelectedItem();
+            if(className.isEmpty() || teacher == null){
+                throw new Exception("you must enter a valid name and teacher");
+            }
+            schoolClass.setClassName(className);
             schoolClass.setTeacher(teacher);
             schoolClassDAO.update(schoolClass);
-            System.out.println("The class is updated successfully");
-        } else {
-            System.out.println("class not found");
+            loadClasses();
+            formCleaning();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(schoolClassView, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    public void loadClasses() {
+        try {
+            List<SchoolClass> classes = schoolClassDAO.findAll();
+            DefaultTableModel tableModel = schoolClassView.getTableModel();
+            tableModel.setRowCount(0);
+            for (SchoolClass c : classes) {
+                tableModel.addRow(new Object[] { c.getId(), c.getClassName(), c.getTeacher()});
+            }
+            List<Teacher> teachers = teacherDAO.findAll();
+            JComboBox<Teacher> teacherComboBox = schoolClassView.getTeacherComboBox();
+            teacherComboBox.removeAllItems();
+            for (Teacher t : teachers) {
+                teacherComboBox.addItem(t);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(schoolClassView, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void deleteSchoolClass() {
-        System.out.print("Enter the class Id :");
-        int id = scanner.nextInt();
-        SchoolClass schoolClass = schoolClassDAO.findById(id);
-        if (schoolClass != null) {
-            schoolClassDAO.delete(schoolClass.getId());
-            System.out.println("class is deleted successfully");
-        }else{
-            System.out.println("class not found");
-        }
-    }
-    private void addStudentToClass() {
-        System.out.print("Enter the class Id :");
-        int id = scanner.nextInt();
-        scanner.nextLine();
-        System.out.print("Enter the Student Id :");
-        int studentId = scanner.nextInt();
-        SchoolClass schoolClass = schoolClassDAO.findById(id);
-        Student student = studentDAO.findById(studentId);
-        if (student != null && schoolClass != null) {
-            schoolClassDAO.addStudentToClass(student, schoolClass);
-            System.out.println("student added to class successfully");
-        } else {
-            System.out.println("class or student not found");
-        }
+    private void formCleaning() {
+        schoolClassView.getClassTable().clearSelection();
+        schoolClassView.getNewBtn().setEnabled(false);
+        schoolClassView.getEditBtn().setEnabled(false);
+        schoolClassView.getDeleteBtn().setEnabled(false);
+        schoolClassView.getAddBtn().setEnabled(true);
+        emptyFields();
     }
 
-    private void deleteStudentFromClass() {
-        System.out.print("Enter the class Id :");
-        int id = scanner.nextInt();
-        scanner.nextLine();
-        System.out.print("Enter the Student Id :");
-        int studentId = scanner.nextInt();
-        SchoolClass schoolClass = schoolClassDAO.findById(id);
-        Student student = studentDAO.findById(studentId);
-        if (student != null && schoolClass != null) {
-            schoolClassDAO.deleteStudentFromClass(student, schoolClass);
-            System.out.println("student removed from the class successfully");
-        } else {
-            System.out.println("class or student are not found");
-        }
-    }
-
-    private void displayClassStudents() {
-        System.out.print("Enter the class Id :");
-        int id = scanner.nextInt();
-        scanner.nextLine();
-        SchoolClass schoolClass = schoolClassDAO.findById(id);
-        schoolClass = schoolClassDAO.findStudentsOfClass(schoolClass);
-        view.displayClassStudents(schoolClass);
+    private void emptyFields() {
+        schoolClassView.getNameField().setText("");
+        schoolClassView.getTeacherComboBox().setSelectedIndex(0);
     }
 }

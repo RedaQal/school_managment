@@ -1,88 +1,141 @@
 package controller;
 
-import java.util.Scanner;
+import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionListener;
 
 import dao.StudentDAO;
 import model.Student;
 import view.StudentView;
 
 public class StudentController {
-    private StudentView view;
-    private Scanner scanner;
+    private StudentView studentView;
     private StudentDAO studentDAO;
+
+    public StudentView getStudentView() {
+        return studentView;
+    }
 
     public StudentController() {
         this.studentDAO = new StudentDAO();
-        this.view = new StudentView();
-        this.scanner = new Scanner(System.in);
+        this.studentView = new StudentView();
+        loadStudents();
+        studentView.getAddBtn().addActionListener(e -> addStudent());
+        studentView.getStudentTable().getSelectionModel().addListSelectionListener(e -> ListHandelr());
+    }
+    private void ListHandelr(){
+        studentView.getNewBtn().setEnabled(true);
+        studentView.getEditBtn().setEnabled(true);
+        studentView.getDeleteBtn().setEnabled(true);
+        int selectedRow = studentView.getStudentTable().getSelectedRow();
+        for (ActionListener al : studentView.getDeleteBtn().getActionListeners()) {
+            studentView.getDeleteBtn().removeActionListener(al);
+        }
+        for (ActionListener al : studentView.getEditBtn().getActionListeners()) {
+            studentView.getEditBtn().removeActionListener(al);
+        }
+        if (selectedRow != -1) {
+            int id = (int) studentView.getStudentTable().getValueAt(selectedRow, 0);
+            String name = (String) studentView.getStudentTable().getValueAt(selectedRow, 1);
+            int age = (int) studentView.getStudentTable().getValueAt(selectedRow, 2);
+            studentView.getNameField().setText(name);
+            studentView.getAgeField().setText(Integer.toString(age));
+
+            Student student = new Student(id, name, age);
+
+            studentView.getDeleteBtn().addActionListener(element -> {
+                deleteStudent(student);
+                formCleaning();
+            });
+            studentView.getEditBtn().addActionListener(element -> {
+                updateStudent(student);
+                formCleaning();
+            });
+            studentView.getNewBtn().addActionListener(element -> formCleaning());
+
+        }
+        studentView.getAddBtn().setEnabled(false);
     }
 
-    public void manageStudent() {
-        int entry;
-        do {
-            view.displayStudentMenu();
-            entry = scanner.nextInt();
-            scanner.nextLine();
-            switch (entry) {
-                case 1:
-                    addStudent();
-                    break;
-                case 2:
-                    updateStudent();
-                    break;
-                case 3:
-                    deleteStudent();
-                    break;
-                case 4:
-                    view.displayStudents(studentDAO.findAll());
-                    break;
-                case 5:
-                    break;
-                default:
-                System.out.println("Please choose a valid option");
-                    break;
+    private void loadStudents() {
+        try {
+            ArrayList<Student> students = (ArrayList<Student>) studentDAO.findAll();
+            DefaultTableModel model = studentView.getTableModel();
+            model.setRowCount(0);
+            for (Student s : students) {
+                model.addRow(new Object[] { s.getId(), s.getName(), s.getAge() });
             }
-        } while (entry != 5);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(studentView, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void addStudent() {
-        System.out.print("Enter the student name :");
-        String name = scanner.nextLine();
-        System.out.print("Enter the student age :");
-        int age = scanner.nextInt();
-        Student student = new Student(name, age);
-        studentDAO.save(student);
-    }
-
-    private void updateStudent() {
-        System.out.print("enter the student id :");
-        int id = scanner.nextInt();
-        scanner.nextLine();
-        Student student = studentDAO.findById(id);
-        if (student != null) {
-            System.out.print("enter the new name :");
-            String name = scanner.nextLine();
-            System.out.print("enter the new age :");
-            int age = scanner.nextInt();
-            scanner.nextLine();
-            student.setName(name);
-            student.setAge(age);
-            studentDAO.update(student);
-            System.out.println("student updated successfully");
-        } else {
-            System.out.println("student unfound");
+        try {
+            String studentName = studentView.getNameField().getText();
+            int studentAge = Integer.parseInt(studentView.getAgeField().getText());
+            if (studentAge != 0 && !studentName.isEmpty()) {
+                Student student = new Student(studentName, studentAge);
+                studentDAO.save(student);
+                emptyFields();
+                loadStudents();
+                JOptionPane.showMessageDialog(studentView, "Student : " + student.getName() + " added successfully",
+                        "student added", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                throw new Exception("you must enter a valid name and age");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(studentView, "Age must be an natural number", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(studentView, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void deleteStudent() {
-        System.out.print("Enter the student Id :");
-        int id = scanner.nextInt();
-        Student student = studentDAO.findById(id);
-        if (student != null) {
+    private void deleteStudent(Student student) {
+        try {
             studentDAO.delete(student.getId());
-            System.out.println("student deleted successfully");
-        } else {
-            System.out.println("student unfound");
+            loadStudents();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(studentView, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void updateStudent(Student student) {
+        try {
+            String newName = studentView.getNameField().getText();
+            int newAge = Integer.parseInt(studentView.getAgeField().getText());
+            if (newAge != 0 && !newName.isEmpty()) {
+                student.setName(newName);
+                student.setAge(newAge);
+                studentDAO.update(student);
+                loadStudents();
+                JOptionPane.showMessageDialog(studentView, "Student : " + student.getName() + " edited successfully",
+                        "student updated", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                throw new Exception("you must enter a valid name and age");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(studentView, "Age must be an natural number", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(studentView, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void formCleaning() {
+        studentView.getStudentTable().clearSelection();
+        studentView.getNewBtn().setEnabled(false);
+        studentView.getEditBtn().setEnabled(false);
+        studentView.getDeleteBtn().setEnabled(false);
+        studentView.getAddBtn().setEnabled(true);
+        emptyFields();
+    }
+
+    private void emptyFields() {
+        studentView.getNameField().setText("");
+        studentView.getAgeField().setText("");
     }
 }
